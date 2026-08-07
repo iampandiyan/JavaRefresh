@@ -11,3 +11,25 @@
 
 Q: Why do we use the factory pattern?
 A: We use it to hide creation details and centralize object construction. The client only depends on an interface and a factory, not concrete implementation classes.
+
+Q: Could you please explain the flow with what will be the value of variable in each call?
+A: Using `FactoryDemo.java` (simplified):
+
+Setup
+- No provider instances exist initially.
+
+Step-by-step
+1. `VideoProvider falAiProvider = VideoProviderFactory.create("FalAi");`
+	- `VideoProviderFactory.create` examines the input string and returns `new FalAiProvider()`.
+	- `falAiProvider` refers to a `FalAiProvider` instance.
+2. `falAiProvider.generateVideo("Create a video about AI.")` calls the provider implementation which returns:
+	- `"Fal AI generated video for prompt: Create a video about AI."`
+	- that string is printed by the demo.
+3. `VideoProvider togetherAiProvider = VideoProviderFactory.create("TogetherAi");`
+	- returns `new TogetherAiProvider()`; `togetherAiProvider` refers to that instance.
+4. `togetherAiProvider.generateVideo("Create a video about teamwork.")` returns
+	- `"Together AI generated video for prompt: Create a video about teamwork."`
+
+Notes
+- The factory decides which concrete class to instantiate; the client only holds `VideoProvider` references and doesn't need to know the concrete types.
+

@@ -20,3 +20,29 @@ A: The flow starts in `ObserverDemo.main(...)`. It creates `OrderPublisher`, sub
 
 Q: Are you saying that if there is change in one update may impact multiple flows? All the flows are added in publisher as a single group, so when there is a update in one flow, it will trigger impact on all flows in the same group?
 A: Yes, your current implementation broadcasts one update to every observer in the publisher’s list. That means the same event is delivered to all observers, but each observer can react differently. It does not force them to do the same thing, just to receive the same notification.
+
+Q: Could you please explain the flow with what will be the value of variable in each call?
+A: Using `ObserverDemo.java` and `OrderPublisher`:
+
+Setup
+- `publisher` = new `OrderPublisher()` with `observers` = empty list.
+
+Step-by-step
+1. `publisher.subscribe(new EmailOrderObserver())`:
+  - a new `EmailOrderObserver` instance is created and added to `publisher.observers` at index 0.
+2. `publisher.subscribe(new SmsOrderObserver())`:
+  - new `SmsOrderObserver` instance added to `publisher.observers` at index 1.
+3. `publisher.updateStatus("ORD-1001", "PROCESSING")`:
+  - inside `updateStatus`, `observers.forEach` iterates the list.
+  - First iteration: `o` = `EmailOrderObserver` instance; call `o.onOrderStatusChanged("ORD-1001","PROCESSING")` → prints `Email observer: Order ORD-1001 changed to PROCESSING`.
+  - Second iteration: `o` = `SmsOrderObserver` instance; call `o.onOrderStatusChanged(...)` → prints `SMS observer: Order ORD-1001 changed to PROCESSING`.
+4. `publisher.updateStatus("ORD-1001", "SHIPPED")` repeats the same loop with `status` = "SHIPPED"; both observers receive the new value.
+
+Key variables
+- `publisher.observers` = list of observer instances
+- `o` = current observer in the loop (Email then SMS)
+- `id` and `status` parameters are the strings passed through to each observer (`"ORD-1001"`, then statuses)
+
+Notes
+- The publisher does not mutate observer internals; it simply broadcasts data to each registered listener.
+

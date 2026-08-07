@@ -20,3 +20,22 @@ A: No, the original object is not modified. `plainCoffee` remains the same `Simp
 
 Q: Will `Coffee milkCoffee = new MilkDecorator(plainCoffee);` create a new object?
 A: Yes, it creates a new `MilkDecorator` instance. It wraps the original `plainCoffee` but does not change it. The cost is computed when `milkCoffee.getCost()` is called by adding `wrappedCoffee.getCost()` plus the decorator’s extra amount.
+
+Q: Could you please explain the flow with what will be the value of variable in each call?
+A: Using `CoffeeDecoratorDemo.java`:
+
+Setup
+- `plainCoffee` = new `SimpleCoffee()` (description: "Simple coffee", cost: 2.0)
+
+Step-by-step
+1. `plainCoffee.getCost()` returns `2.0`.
+2. `Coffee milkCoffee = new MilkDecorator(plainCoffee)` creates a `MilkDecorator` where:
+	- `milkCoffee.wrappedCoffee` points to the `plainCoffee` instance
+3. `milkCoffee.getCost()` calls `wrappedCoffee.getCost()` (2.0) and returns `2.0 + 0.5 = 2.5`.
+4. `Coffee sweetMilkCoffee = new SugarDecorator(milkCoffee)` creates a `SugarDecorator` where:
+	- `sweetMilkCoffee.wrappedCoffee` points to `milkCoffee`
+5. `sweetMilkCoffee.getCost()` calls `milkCoffee.getCost()` which returns `2.5`, then adds `0.2` → final `2.7`.
+
+Other observations
+- The original `plainCoffee` remains unchanged; decorators hold references to wrapped objects and compute results by delegation at call time.
+
